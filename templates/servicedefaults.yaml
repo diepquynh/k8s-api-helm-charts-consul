@@ -1,0 +1,9 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: {{ include "api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  protocol: "http"
+{{- end }}

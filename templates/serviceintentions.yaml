@@ -1,0 +1,12 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: {{ include "api.fullname" . }}-service-intentions
+spec:
+  destination:
+    name: {{ include "api.fullname" . }}
+  sources:
+    - name: {{ .Values.gateway.name }}
+      action: allow
+{{- end }}
