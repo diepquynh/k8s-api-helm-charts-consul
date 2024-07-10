@@ -1,4 +1,6 @@
-{{- if and .Values.gateway.enabled -}}
+{{- if .Values.gateway -}}
+{{- if .Values.gateway.httpRoute -}}
+{{- if .Values.gateway.httpRoute.required -}}
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
@@ -8,8 +10,10 @@ spec:
   parentRefs:
     - name: {{ .Values.gateway.name }}
       namespace: {{ .Values.gateway.namespace }}
-  {{- with .Values.gateway.rules }}
+  {{- with .Values.gateway.httpRoute.rules }}
   rules:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- end }}
+{{- end }}
 {{- end }}

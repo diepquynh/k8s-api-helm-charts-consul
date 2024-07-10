@@ -1,4 +1,7 @@
-{{- if .Values.gateway.enabled -}}
+{{- if .Values.service -}}
+{{- if .Values.service.required -}}
+{{- if .Values.service.gateway }}
+{{- if .Values.service.gateway.required -}}
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
@@ -7,6 +10,9 @@ spec:
   destination:
     name: {{ include "api.fullname" . }}
   sources:
-    - name: {{ .Values.gateway.name }}
+    - name: {{ .Values.service.gateway.name }}
       action: allow
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}

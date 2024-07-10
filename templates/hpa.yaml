@@ -1,4 +1,7 @@
-{{- if .Values.autoscaling.enabled }}
+{{- if .Values.service -}}
+{{- if .Values.service.required }}
+{{- if .Values.service.autoscaling }}
+{{- if .Values.service.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,27 +14,30 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "api.fullname" . }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.service.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.service.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.service.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.service.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.service.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.service.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
-  {{- if .Values.autoscaling.behavior }}
+  {{- if .Values.service.autoscaling.behavior }}
   behavior:
-    {{- toYaml .Values.autoscaling.behavior | nindent 4 }}
+    {{- toYaml .Values.service.autoscaling.behavior | nindent 4 }}
   {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}

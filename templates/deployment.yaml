@@ -1,3 +1,5 @@
+{{- if .Values.service -}}
+{{- if .Values.service.required }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,8 +8,8 @@ metadata:
   labels:
     {{- include "api.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.service.autoscaling.enabled }}
+  replicas: {{ .Values.service.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -16,72 +18,74 @@ spec:
     metadata:
       annotations:
         {{ "consul.hashicorp.com/connect-service" }}: {{ include "api.serviceAccountName" . }}
-        {{- with .Values.podAnnotations }}
+        {{- with .Values.service.podAnnotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "api.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
+        {{- with .Values.service.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.service.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "api.serviceAccountName" . }}
-      {{- if .Values.podSecurityContext }}
+      {{- if .Values.service.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.service.podSecurityContext | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- if .Values.securityContext }}
+          {{- if .Values.service.securityContext }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.service.securityContext | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.env.envValues }}
+          image: "{{ .Values.service.image.repository }}:{{ .Values.service.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.service.image.pullPolicy }}
+          {{- if .Values.service.env.envValues }}
           env:
-          {{- range $i, $val := .Values.env.envValues }}
+          {{- range $i, $val := .Values.service.env.envValues }}
             - name: {{ $val.name | quote }}
               value: {{ $val.value | quote }}
           {{- end }}
           {{- end }}
-          {{- if .Values.env.envFrom }}
+          {{- if .Values.service.env.envFrom }}
           envFrom:
-            {{- toYaml .Values.env.envFrom | nindent 16 }}
+            {{- toYaml .Values.service.env.envFrom | nindent 16 }}
           {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- toYaml .Values.service.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
-          {{- if .Values.resources }}
+            {{- toYaml .Values.service.readinessProbe | nindent 12 }}
+          {{- if .Values.service.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.service.resources | nindent 12 }}
           {{- end }}
-          {{- with .Values.volumeMounts }}
+          {{- with .Values.service.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- with .Values.service.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.service.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.service.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.service.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
+{{- end }}

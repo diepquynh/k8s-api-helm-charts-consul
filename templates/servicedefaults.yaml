@@ -1,4 +1,7 @@
-{{- if .Values.gateway.enabled -}}
+{{- if .Values.service -}}
+{{- if .Values.service.required -}}
+{{- if .Values.service.gateway }}
+{{- if .Values.service.gateway.required -}}
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceDefaults
 metadata:
@@ -6,4 +9,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   protocol: "http"
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
