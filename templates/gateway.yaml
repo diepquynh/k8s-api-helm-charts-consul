@@ -1,0 +1,19 @@
+{{- if .Values.gateway -}}
+{{- if .Values.gateway.required -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Values.gateway.namespace }}
+spec:
+  gatewayClassName: consul
+  listeners:
+  - protocol: HTTP
+    port: {{ .Values.gateway.port }}
+    name: http
+    allowedRoutes:
+      namespaces:
+        from: All
+  # TODO: Configure allowed namespace and TLS
+{{- end}}
+{{- end}}

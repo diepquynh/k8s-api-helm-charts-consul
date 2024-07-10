@@ -12,24 +12,6 @@ $ helm repo add hashicorp https://helm.releases.hashicorp.com
 ```
 
 3. Install consul with Kubernetes Gateway API
-- `gateway.yaml`
-```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: Gateway
-metadata:
-  name: consul-gateway
-  namespace: gateway-namespace
-spec:
-  gatewayClassName: consul
-  listeners:
-  - protocol: HTTP
-    port: 16000
-    name: http
-    allowedRoutes:
-      namespaces:
-        from: All
-
-```
 - Consul's `values.yaml`
 ```yaml
 # Configure global settings in this section.
@@ -82,10 +64,9 @@ connectInject:
 - Install
 ```bash
 $ helm install consul hashicorp/consul --create-namespace --namespace consul -f path/to/consul/values.yaml
-$ kubectl apply -f path/to/gateway.yaml
 ```
 
 4. Test and try
 ```bash
-$ helm install api-charts . --create-namespace --namespace api
+$ helm install api . --create-namespace --namespace api
 ```

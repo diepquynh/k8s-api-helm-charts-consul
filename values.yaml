@@ -89,6 +89,7 @@ gateway:
   required: true
   name: consul-gateway
   namespace: gateway-namespace
+  port: 16000
   httpRoute:
     required: true
     rules:
